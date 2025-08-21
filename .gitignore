@@ -1,0 +1,4 @@
+.venv
+.ropenproject
+__pycache__
+starapi.db
