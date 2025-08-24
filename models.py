@@ -59,9 +59,9 @@ class Starship(SQLModel, table=True):
     crew: str = Field(index=True)
     passengers : str = Field(index=True)
     cargo_capacity : str = Field(index=True)
-    consumables: int = Field(index=True)
-    hyperdrive_rating: int = Field(index=True)
-    MGLT: int = Field(index=True)
+    consumables: str = Field(index=True)
+    hyperdrive_rating: str = Field(index=True)
+    MGLT: str = Field(index=True)
     starship_class: str = Field(index=True)
     swapi_id :int = Field(index=True)
     created: datetime = Field(default_factory=datetime.utcnow)
@@ -116,9 +116,9 @@ class StarshipRead(BaseModel):
     crew: str
     passengers: str
     cargo_capacity: str
-    consumables: int
-    hyperdrive_rating: int
-    MGLT: int
+    consumables: str
+    hyperdrive_rating: str
+    MGLT: str
     starship_class: str
     films: List[FilmNested] = []
     characters: List[CharacterNested] = []
