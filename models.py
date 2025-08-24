@@ -1,6 +1,7 @@
-from sqlmodel import SQLModel,  Field, Relationship
+from sqlmodel import SQLModel, Field, Relationship
 from datetime import datetime
 from typing import Optional, List
+from pydantic import BaseModel
 
 class CharacterStarshipLink(SQLModel, table=True):
     __tablename__ = "character_starship_link"
@@ -19,26 +20,30 @@ class StarshipFilmLink(SQLModel, table=True):
 
 class Character(SQLModel, table=True):
     __tablename__ = 'character'
-    id: int = Field(default=None, primary_key=True)
+    id: int | None = Field(default=None, primary_key=True)
     name: str = Field(index=True)
-    height: int = Field(index=True)
-    mass: int = Field(index=True)
-    hair_colour: str = Field(index=True)
-    eye_colour : str = Field(index=True)
+    height: str = Field(index=True)
+    mass: str = Field(index=True)
+    hair_color: str = Field(index=True)
+    eye_color : str = Field(index=True)
     birth_year : str = Field(index=True)
     gender : str = Field(index=True)
+    swapi_id :int = Field(index=True)
     starships: List["Starship"] = Relationship(back_populates="characters", link_model=CharacterStarshipLink)
     films: List["Film"] = Relationship(back_populates="characters", link_model=CharacterFilmLink)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created: datetime | None = Field(default_factory=datetime.utcnow)
 
 class Film(SQLModel, table=True):
     __tablename__ = 'film'
-    id: int = Field(default=None, primary_key=True)
+    id: int | None= Field(default=None, primary_key=True)
     title: str = Field(index=True)
+    episode_id : int = Field(index=True)
     opening_crawl: str = Field(index=True)
     director: str = Field(index=True)
     producer: str = Field(index=True)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    release_date: str = Field(index=True)
+    swapi_id :int = Field(index=True)
+    created: datetime | None = Field(default_factory=datetime.utcnow)
     characters: List[Character] = Relationship(back_populates="films", link_model=CharacterFilmLink)
     starships: List["Starship"] = Relationship(back_populates="films", link_model=StarshipFilmLink)
 
@@ -48,16 +53,73 @@ class Starship(SQLModel, table=True):
     name: str = Field(index=True)
     model: str = Field(index=True)
     manufacturer: str = Field(index=True)
-    cost_in_credits: int = Field(index=True)
-    length: int = Field(index=True)
-    max_atmosphering_speed : int = Field(index=True)
+    cost_in_credits: str = Field(index=True)
+    length: str = Field(index=True)
+    max_atmosphering_speed : str = Field(index=True)
     crew: str = Field(index=True)
-    passengers : int = Field(index=True)
-    cargo_capacity : int = Field(index=True)
+    passengers : str = Field(index=True)
+    cargo_capacity : str = Field(index=True)
     consumables: int = Field(index=True)
     hyperdrive_rating: int = Field(index=True)
-    mglt: int = Field(index=True)
+    MGLT: int = Field(index=True)
     starship_class: str = Field(index=True)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    swapi_id :int = Field(index=True)
+    created: datetime = Field(default_factory=datetime.utcnow)
     characters: List[Character] = Relationship(back_populates="starships", link_model=CharacterStarshipLink)
     films: List[Film] = Relationship(back_populates="starships", link_model=StarshipFilmLink)
+
+# Simplified nested models (used when these objects appear as nested relationships)
+class CharacterNested(BaseModel):
+    id: int
+    name: str
+
+class FilmNested(BaseModel):
+    id: int
+    title: str
+
+class StarshipNested(BaseModel):
+    id: int
+    name: str
+
+# Full models for main API responses (with nested relationships)
+class CharacterRead(BaseModel):
+    id: int
+    name: str
+    height: str
+    mass: str
+    hair_color: str
+    eye_color: str
+    birth_year: str
+    gender: str
+    starships: List[StarshipNested] = []
+    films: List[FilmNested] = []
+
+class FilmRead(BaseModel):
+    id: int
+    title: str
+    episode_id: int
+    director: str
+    producer: str
+    release_date: str
+    opening_crawl: str
+    starships: List[StarshipNested] = []
+    characters: List[CharacterNested] = []
+
+class StarshipRead(BaseModel):
+    id: int
+    name: str
+    model: str
+    manufacturer: str
+    cost_in_credits: str
+    length: str
+    max_atmosphering_speed: str
+    crew: str
+    passengers: str
+    cargo_capacity: str
+    consumables: int
+    hyperdrive_rating: int
+    MGLT: int
+    starship_class: str
+    films: List[FilmNested] = []
+    characters: List[CharacterNested] = []
+

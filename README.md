@@ -1,6 +1,7 @@
 # Starapi
 
 ## Building Instructions
+- Use python 3.13.7
 
 - Install sqlite
   - For windows comes with python installation
@@ -15,4 +16,9 @@
 - Install requirements
  - pip install -r requirements.txt
 
-- Run the program fastapi run starapi.py
+## Running 
+
+- Run the program 
+`fastapi run main.py`
+- first run the **/import_swapi_data endpoint** to fetch and store the data from SWAPI
+- visit the **/docs** to see the available routes 
